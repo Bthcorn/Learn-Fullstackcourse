@@ -12,7 +12,7 @@ dotenv.config();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const bookController = require('../controllers/BookController');
+const bookController = require('./controllers/BookController');
 app.use('/book', bookController);
 
 app.get('/', (req, res) => {
