@@ -483,7 +483,7 @@ app.post("/book/testUpload", (req, res) => {
         const myFile = req.files.myFile;
         myFile.mv("./uploads/" + myFile.name, (err) => {
             if (err) {
-                return res.status(500).send({ message: err });
+                return res.status(500).send({ message: err.message });
             }
             res.send({ message: "Upload file success" });
         });
@@ -584,6 +584,19 @@ app.get('/readExcel', async (req, res) => {
     }
 });
 
-app.listen(3000, () => {
-    console.log("Listening on port 3000");
+app.delete('/orderDetail/remove/:id', async (req, res) => {
+    try {
+        await prisma.orderDetail.delete({
+            where: {
+                id: parseInt(req.params.id)
+            }
+        });
+        res.send({ message: 'Delete order detail success' });
+    } catch (error) {
+        res.status(500).send({ error: error.message });
+    }
+});
+
+app.listen(3001, () => {
+    console.log("Listening on port 3001");
 });

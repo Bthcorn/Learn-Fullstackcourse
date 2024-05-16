@@ -1,31 +1,33 @@
-import React, { useEffect, useState } from "react";
-// const dayjs = require('dayjs');
+import React, { useState } from "react";
 import axios from "axios";
+import config from "./components/config";
 
 export default function Hello() {
-  // const [items, setItem] = useState([]);
+  const [fileSelected, setFileSelected] = useState({});
 
-  // useEffect(() => {
-  //   console.log('startPage');
-  // }, [items]);
+  const selectedFile = (fileInput) => {
+    if (fileInput.length && fileInput) {
+      setFileSelected(fileInput[0]);
+    }
+  };
 
-  // const newItem = () => {
-  //   setItem([1, 2, 3, 4, 5]);
-  // }
-  // const [payDate,  setPayDate] = useState(new Date());
-  const getMethod = async () => {
+  const UploadFile = async () => {
     try {
-      await axios.get("http://localhost:3001/book/orderBy");
+      const formData = new FormData();
+      formData.append('myFile', fileSelected);
+
+      await axios.post(config.apiPath + '/book/testUpload', formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
     } catch (error) {
       console.log(error);
     }
   };
 
-  return (
-    <div>
-      <button className="btn btn-primary" onClick={getMethod}>
-        Call API GET METHOD
-      </button>
-    </div>
-  );
+  return <div>
+    <input type="file" onChange={(e) => selectedFile(e.target.files)} />
+    <button className="bth bth-primary" onClick={UploadFile}>Upload Now</button>
+  </div>;
 }
