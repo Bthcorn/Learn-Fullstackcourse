@@ -6,7 +6,7 @@ export default function Hello() {
   const [fileSelected, setFileSelected] = useState({});
 
   const selectedFile = (fileInput) => {
-    if (fileInput.length && fileInput) {
+    if (fileInput.length > 0 && fileInput) {
       setFileSelected(fileInput[0]);
     }
   };
