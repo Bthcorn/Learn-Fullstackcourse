@@ -11,12 +11,7 @@ export default function SignIn() {
 
   const handleSignIn = async () => {
     try {
-      // console.log(user);
-      if (!user.user || !user.pass) {
-        throw new Error("Username and password are required.");
-      }
-
-      const res = await axios.post(`${config.apiPath}/user/signIn`, user);
+      const res = await axios.post(config.apiPath + '/user/signIn', user);
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token);
