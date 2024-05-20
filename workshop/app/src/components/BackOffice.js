@@ -11,7 +11,7 @@ export default function BackOffice(props) {
       <div className='wrapper'>
         <NavBar />
         <SideBar />
-        <div className='content-wrapper'>
+        <div className='content-wrapper p-2'>
           {props.children}
         </div>
         <Footer />
