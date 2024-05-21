@@ -11,29 +11,45 @@ export default function Product() {
 
   React.useEffect(() => {
     fetchData();
+    console.log(products);
   }, []);
-  
+
   const handleSave = async () => {
     try {
-      product.img = '';
+      product.img = "";
       product.cost = parseInt(product.cost);
       product.price = parseInt(product.price);
-      const res = await axios.post(config.apiPath +  "/product/create", product, config.headers());
+      let res;
+      if (product.id === undefined) {
+        res = await axios.post(
+          config.apiPath + "/product/create",
+          product,
+          config.headers()
+        );
+      } else {
+        res = await axios.put(
+          config.apiPath + "/product/update/" + product.id,
+          product,
+          config.headers()
+        );
+      }
 
       if (res.status === 200) {
         Swal.fire({
-          icon: 'success',
-          title: 'Success...',
-          text: 'Product has been saved',
+          icon: "success",
+          title: "Success...",
+          text: "Product has been saved",
           timer: 2000,
         });
-        document.getElementById('modalProduct').click();
+        document.getElementById("modalProduct").click();
         fetchData();
+
+        setProduct({ ...product, id: undefined });
       }
     } catch (error) {
-     Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
         text: error.message,
       });
     }
@@ -41,15 +57,18 @@ export default function Product() {
 
   const fetchData = async () => {
     try {
-      const res = await axios.get(config.apiPath + "/product/list", config.headers());
-
+      const res = await axios.get(
+        config.apiPath + "/product/list",
+        config.headers()
+      );
       if (res.data.result) {
         setProducts(res.data.result);
+        console.log(products);
       }
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'Oops...',
+        icon: "error",
+        title: "Oops...",
         text: error.message,
       });
     }
@@ -57,44 +76,146 @@ export default function Product() {
 
   const clearForm = () => {
     setProduct({
-      name: '',
-      cost: '',
-      price: '',
-      img: '',
+      name: "",
+      cost: "",
+      price: "",
+      img: "",
     });
-  }
+  };
+
+  const handleRemove = async (item) => {
+    try {
+      const button = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, keep it",
+      });
+
+      if (button.isConfirmed) {
+        const res = await axios.delete(
+          config.apiPath + "/product/remove/" + item.id,
+          config.headers()
+        );
+
+        if (res.data.message === "succes") {
+          Swal.fire({
+            icon: "success",
+            title: "Success...",
+            text: "Product has been removed",
+            timer: 2000,
+          });
+          fetchData();
+        }
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message,
+      });
+    }
+  };
 
   return (
     <BackOffice>
       <div className="h4">Product</div>
-      <button className="btn btn-primary" data-toggle='modal' data-target='#modalProduct' onClick={clearForm}>
-        <i className="fa fa-plus"></i> Add Product
+      <button
+        className="btn btn-primary mr-2"
+        data-toggle="modal"
+        data-target="#modalProduct"
+        onClick={clearForm}
+      >
+        <i className="fa fa-plus mr-2"></i>Add Product
       </button>
+      <button className="btn btn-success">
+        <i className="fa fa-file-excel mr-2"></i>Import from Excel
+      </button>
+
+      <table class="mt-3 table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th scope="col" width="200px">
+              Name
+            </th>
+            <th scope="col" className="text-right" width="200px">
+              Cost
+            </th>
+            <th scope="col" className="text-right" width="200px">
+              Price
+            </th>
+            <th scope="col" className="text-right" width="200px">
+              Image
+            </th>
+            <th scope="col" className="text-center" width="150px"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.length > 0 ? (
+            products.map((product, index) => (
+              <tr key={product.id}>
+                <td>{product.name}</td>
+                <td>{product.cost}</td>
+                <td>{product.price}</td>
+                <td>{product.img}</td>
+                <td className="text-center">
+                  <button
+                    className="btn btn-warning"
+                    data-toggle="modal"
+                    data-target="#modalProduct"
+                    onClick={(e) => setProduct(product)}
+                  >
+                    <i className="fa fa-edit"></i>
+                  </button>
+                  <button
+                    className="btn btn-danger ml-2"
+                    onClick={(e) => handleRemove(product)}
+                  >
+                    <i className="fa fa-trash"></i>
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <></>
+          )}
+        </tbody>
+      </table>
 
       <MyModal id="modalProduct" title="Product">
         <div>
-          <div>
-            Name
-          </div>
-          <input value={product.name} className="form-control" onChange={(e) => setProduct({...product, name: e.target.value})}/>
+          <div>Name</div>
+          <input
+            value={product.name}
+            className="form-control"
+            onChange={(e) => setProduct({ ...product, name: e.target.value })}
+          />
         </div>
         <div>
-          <div className="mt-2">
-            Cost
-          </div>
-          <input value={product.cost} className="form-control" onChange={(e) => setProduct({...product, cost: e.target.value})}/>
+          <div className="mt-2">Cost</div>
+          <input
+            value={product.cost}
+            className="form-control"
+            onChange={(e) => setProduct({ ...product, cost: e.target.value })}
+          />
         </div>
         <div>
-          <div className="mt-2">
-            Price
-          </div>
-          <input value={product.price} className="form-control" onChange={(e) => setProduct({...product, price: e.target.value})}/>
+          <div className="mt-2">Price</div>
+          <input
+            value={product.price}
+            className="form-control"
+            onChange={(e) => setProduct({ ...product, price: e.target.value })}
+          />
         </div>
         <div>
-          <div className="mt-2">
-            Image
-          </div>
-          <input className="form-control" type='file' onChange={(e) => setProduct({...product, img: e.target.value})}/>
+          <div className="mt-2">Image</div>
+          <input
+            className="form-control"
+            type="file"
+            onChange={(e) => setProduct({ ...product, img: e.target.value })}
+          />
         </div>
         <div className="modal-footer">
           <button className="btn btn-primary mt-2" onClick={handleSave}>
