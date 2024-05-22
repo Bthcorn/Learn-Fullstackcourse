@@ -8,15 +8,42 @@ import config from "../../components/config";
 export default function Product() {
   const [product, setProduct] = React.useState({});
   const [products, setProducts] = React.useState([]);
-
+  const [img, setImg] = React.useState({});
+  
   React.useEffect(() => {
     fetchData();
     console.log(products);
   }, []);
+  
+  const handleUpload = async () => {
+    try {
+      const formData = new FormData();
+      formData.append('img', img);
+      console.log(img);
+      const res = await axios.post(config.apiPath + '/product/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': localStorage.getItem("token"),
+        },
+      });
+      
+      if (res.data.name !== undefined) {
+        return res.data.name;
+      }
+  
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message,
+      });
+      return "";
+    }
+  }
 
   const handleSave = async () => {
     try {
-      product.img = "";
+      product.img = await handleUpload();
       product.cost = parseInt(product.cost);
       product.price = parseInt(product.price);
       let res;
@@ -81,6 +108,7 @@ export default function Product() {
       price: "",
       img: "",
     });
+    setImg({});
   };
 
   const handleRemove = async (item) => {
@@ -118,6 +146,16 @@ export default function Product() {
       });
     }
   };
+
+  const selectedFile = (fileInput) => {
+    if (fileInput.length > 0 && fileInput !== undefined) {
+      // if 
+      // console.log(fileInput[0]);
+      setImg(fileInput[0]);
+    }
+  };
+
+
 
   return (
     <BackOffice>
@@ -159,7 +197,7 @@ export default function Product() {
                 <td>{product.name}</td>
                 <td>{product.cost}</td>
                 <td>{product.price}</td>
-                <td>{product.img}</td>
+                <td>{product.img !== '' ? <img src={config.apiPath + '/uploads/' + product.img} alt="" className="img-fluid"/> : <></>}</td>
                 <td className="text-center">
                   <button
                     className="btn btn-warning"
@@ -214,7 +252,8 @@ export default function Product() {
           <input
             className="form-control"
             type="file"
-            onChange={(e) => setProduct({ ...product, img: e.target.value })}
+            // onChange={(e) => setProduct({ ...product, img: e.target.value })}
+            onChange={e => selectedFile(e.target.files)}
           />
         </div>
         <div className="modal-footer">
