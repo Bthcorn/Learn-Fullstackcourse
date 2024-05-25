@@ -67,7 +67,7 @@ app.put("/update/:id", async (req, res, next) => {
 
     const imagePath = "/home/corn/course_fullstackXD/workshop/api/uploads/" + oldData.img;
 
-    if (fs.existsSync(imagePath)) {
+    if (fs.existsSync(imagePath) && oldData.img !== "") {
       await fs.unlinkSync(imagePath);
     }
 
