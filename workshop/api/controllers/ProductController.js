@@ -58,6 +58,19 @@ app.delete("/remove/:id", async (req, res, next) => {
 
 app.put("/update/:id", async (req, res, next) => {
   try {
+    const fs = require("fs");
+    const oldData = await prisma.product.findFirst({
+      where: {
+        id: parseInt(req.params.id),
+      },
+    });
+
+    const imagePath = "/home/corn/course_fullstackXD/workshop/api/uploads/" + oldData.img;
+
+    if (fs.existsSync(imagePath)) {
+      await fs.unlinkSync(imagePath);
+    }
+
     await prisma.product.update({
       data: req.body,
       where: {
