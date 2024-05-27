@@ -3,6 +3,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import config from "../config";
 import MyModal from "../component/MyModal";
+import dayjs from "dayjs";
 
 export default function Index() {
   const [products, setProducts] = React.useState("");
@@ -10,7 +11,12 @@ export default function Index() {
   const [items, setItems] = React.useState(0);
   const [sumQty, setSumQty] = React.useState(0);
   const [sumPrice, setSumPrice] = React.useState(0);
-  // const [firstRender, setFirstRender] = React.useState(false);
+  const [customerName, setCustomerName] = React.useState("");
+  const [customerAddress, setCustomerAddress] = React.useState("");
+  const [customerPhone, setCustomerPhone] = React.useState("");
+  const [customerEmail, setCustomerEmail] = React.useState("");
+  const [paymentDate, setPaymentDate] = React.useState(dayjs(new Date()).format("YYYY-MM-DD"));
+  const [paymentTime, setPaymentTime] = React.useState("");
 
   React.useEffect(() => {
     fetchData();
@@ -96,6 +102,77 @@ export default function Index() {
     setSumPrice(sumPrice);
   };
 
+  const handleRemove = async (product) => {
+    try {
+      const button = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+
+      if (button.isConfirmed) {
+        let arr = carts;
+
+        for (let i = 0; i < arr.length; i++) {
+          if (arr[i].id === product.id) {
+            arr.splice(i, 1);
+            break;
+          }
+        }
+
+        setCarts(arr);
+        setItems(carts.length);
+        localStorage.setItem("carts", JSON.stringify(carts));
+        fetchDataFromLocal();
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message,
+      });
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      const payload = {
+        customerName: customerName,
+        customerAddress: customerAddress,
+        customerPhone: customerPhone,
+        paytDate: paymentDate,
+        payTime: paymentTime,
+        carts: carts,
+      }
+      // console.log(payload)
+
+      const res = await axios.post(config.apiPath + "/api/sale/save", payload);
+
+      if (res.data.message === 'success') {
+        localStorage.removeItem("carts");
+        setCarts([]);
+        setItems(0);
+        fetchDataFromLocal();
+
+        Swal.fire({
+          icon: "success",
+          title: "Success",
+          text: "Checkout successfully",
+          timer: 2000,
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: error.message,
+      });
+    }
+  }
 
   return (
     <div className="container-fluid mt-3">
@@ -169,7 +246,7 @@ export default function Index() {
                   <td className="text-center">
                     <button
                       className="btn btn-danger ml-2"
-                      // onClick={(e) => handleRemove(product)}
+                      onClick={(e) => handleRemove(product)}
                     >
                       <i className="fa fa-trash"></i>
                     </button>
@@ -205,29 +282,29 @@ export default function Index() {
             </div>
             <div className="mt-3">
               <div>Name</div>
-              <input type="text" className="form-control" />
+              <input type="text" className="form-control" onChange={e => setCustomerName(e.target.value)}/>
             </div>
             <div className="mt-3">
               <div>Address</div>
-              <textarea className="form-control"></textarea>
+              <input className="form-control" type="text" onChange={e => setCustomerAddress(e.target.value)} />
             </div>
             <div className="mt-3">
               <div>Phone</div>
-              <input type="text" className="form-control" />
+              <input type="text" className="form-control" onChange={e => setCustomerPhone(e.target.value)}/>
             </div>
             <div className="mt-3">
               <div></div>Email</div>
-              <input type="text" className="form-control" />
+              <input type="text" className="form-control" onChange={e => setCustomerEmail(e.target.value)}/>
             </div>
             <div className="text-start mt-3">
               <div>Payment Date</div>
-              <input type="date" className="form-control" onChange={e => console.log(e.target.value)}/>
+              <input type="date" className="form-control" value={paymentDate} onChange={e => setPaymentDate(e.target.value)}/>
             </div>
             <div className="text-start mt-3 mb-3">
               <div>Payment Time</div>
-              <input type="time" className="form-control" onChange={e => console.log(e.target.value)}/>
+              <input type="time" className="form-control" onChange={e => setPaymentTime(e.target.value)}/>
             </div>
-          <button className="btn btn-success"><i className="fa fa-cart-shopping me-2"></i>Checkout</button>
+          <button className="btn btn-success" onClick={handleSave}><i className="fa fa-cart-shopping me-2"></i>Checkout</button>
         </div>
       </MyModal>
     </div>
