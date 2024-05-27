@@ -20,11 +20,11 @@ export default function MyModal(props) {
             <button
               id={props.id + "_bthClose"}
               type="button"
-              class="close"
-              data-dismiss="modal"
+              class="btn-close"
+              data-bs-dismiss="modal"
               aria-label="Close"
+
             >
-              <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body">{props.children}</div>
@@ -32,7 +32,7 @@ export default function MyModal(props) {
             <button
               type="button"
               class="btn btn-secondary"
-              data-dismiss="modal"
+              data-bs-dismiss="modal"
             >
               Close
             </button>
