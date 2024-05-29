@@ -144,7 +144,7 @@ export default function Index() {
         customerName: customerName,
         customerAddress: customerAddress,
         customerPhone: customerPhone,
-        paytDate: paymentDate,
+        payDate: paymentDate,
         payTime: paymentTime,
         carts: carts,
       }
@@ -164,6 +164,14 @@ export default function Index() {
           text: "Checkout successfully",
           timer: 2000,
         });
+
+        document.getElementById("modalCart_bthClose").click();
+        setCustomerName("");
+        setCustomerAddress("");
+        setCustomerPhone("");
+        setCustomerEmail("");
+        setPaymentDate(dayjs(new Date()).format("YYYY-MM-DD"));
+        setPaymentTime("");
       }
     } catch (error) {
       Swal.fire({
@@ -282,19 +290,19 @@ export default function Index() {
             </div>
             <div className="mt-3">
               <div>Name</div>
-              <input type="text" className="form-control" onChange={e => setCustomerName(e.target.value)}/>
+              <input type="text" className="form-control" value={customerName} onChange={e => setCustomerName(e.target.value)}/>
             </div>
             <div className="mt-3">
               <div>Address</div>
-              <input className="form-control" type="text" onChange={e => setCustomerAddress(e.target.value)} />
+              <input className="form-control" type="text" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} />
             </div>
             <div className="mt-3">
               <div>Phone</div>
-              <input type="text" className="form-control" onChange={e => setCustomerPhone(e.target.value)}/>
+              <input type="text" className="form-control" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)}/>
             </div>
             <div className="mt-3">
               <div></div>Email</div>
-              <input type="text" className="form-control" onChange={e => setCustomerEmail(e.target.value)}/>
+              <input type="text" className="form-control" value={customerEmail} onChange={e => setCustomerEmail(e.target.value)}/>
             </div>
             <div className="text-start mt-3">
               <div>Payment Date</div>
@@ -302,7 +310,7 @@ export default function Index() {
             </div>
             <div className="text-start mt-3 mb-3">
               <div>Payment Time</div>
-              <input type="time" className="form-control" onChange={e => setPaymentTime(e.target.value)}/>
+              <input type="time" className="form-control" value={paymentTime} onChange={e => setPaymentTime(e.target.value)}/>
             </div>
           <button className="btn btn-success" onClick={handleSave}><i className="fa fa-cart-shopping me-2"></i>Checkout</button>
         </div>

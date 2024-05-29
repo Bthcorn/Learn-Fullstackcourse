@@ -4,7 +4,6 @@ const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
-const { register } = require("module");
 const fileUpload = require("express-fileupload");
 const exceljs = require("exceljs");
 
@@ -65,7 +64,8 @@ app.put("/update/:id", async (req, res, next) => {
       },
     });
 
-    const imagePath = "/home/corn/course_fullstackXD/workshop/api/uploads/" + oldData.img;
+    const imagePath =
+      "/home/corn/course_fullstackXD/workshop/api/uploads/" + oldData.img;
 
     if (fs.existsSync(imagePath) && oldData.img !== "") {
       await fs.unlinkSync(imagePath);
@@ -124,41 +124,52 @@ app.post("/uploadFromExcel", async (req, res, next) => {
   try {
     const fileExcel = req.files.fileExcel;
 
-    fileExcel.mv(
-      "/home/corn/course_fullstackXD/workshop/api/uploads/" + fileExcel.name,
-      async (err) => {
-        if (err) {
-          throw err;
-        } else {
-          const workbook = new exceljs.Workbook();
-          await workbook.xlsx.readFile(
-            "/home/corn/course_fullstackXD/workshop/api/uploads/" +
-              fileExcel.name
-          );
+    if (fileExcel !== undefined) {
+      if (fileExcel !== null) {
+        fileExcel.mv(
+          "/home/corn/course_fullstackXD/workshop/api/uploads/" +
+            fileExcel.name,
+          async (err) => {
+            if (err) {
+              throw err;
+            } else {
+              const workbook = new exceljs.Workbook();
+              await workbook.xlsx.readFile(
+                "/home/corn/course_fullstackXD/workshop/api/uploads/" +
+                  fileExcel.name
+              );
 
-          const worksheet = workbook.getWorksheet(1);
-          for (let i = 2; i <= worksheet.rowCount; i++) {
-            const row = worksheet.getRow(i);
-            const name = row.getCell(1).value ?? "";
-            const cost = row.getCell(2).value ?? 0; 
-            const price = row.getCell(3).value ?? 0;
+              const worksheet = workbook.getWorksheet(1);
+              for (let i = 2; i <= worksheet.rowCount; i++) {
+                const row = worksheet.getRow(i);
+                const name = row.getCell(1).value ?? "";
+                const cost = row.getCell(2).value ?? 0;
+                const price = row.getCell(3).value ?? 0;
 
-            await prisma.product.create({
-              data: {
-                name: name,
-                cost: cost,
-                price: price,
-                img: "",
-              },
-            });
+                await prisma.product.create({
+                  data: {
+                    name: name,
+                    cost: cost,
+                    price: price,
+                    img: "",
+                  },
+                });
+              }
+              const fs = require("fs");
+              await fs.unlinkSync(
+                "/home/corn/course_fullstackXD/workshop/api/uploads/" +
+                  fileExcel.name
+              );
+            }
           }
-          const fs = require("fs");
-          await fs.unlinkSync(
-            "/home/corn/course_fullstackXD/workshop/api/uploads/" + fileExcel.name
-          );
-        }
+        );
+      } else {
+        res.status(501).send("Excel file is null");
       }
-    );
+    } else {
+      res.status(501).send("Excel file is undefined");
+    }
+
     res.send({ message: "success" });
   } catch (error) {
     res.status(500).send({ message: error.message });

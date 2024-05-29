@@ -123,9 +123,9 @@ export default function SideBar() {
               </Link>
             </li>
             <li class="nav-item">
-              <a href="pages/gallery.html" class="nav-link">
-                <i class="nav-icon far fa-image"></i>
-                <p>Gallery</p>
+              <a href="/billsale" class="nav-link">
+                <i class="nav-icon fa fa-dollar-sign"></i>
+                <p>Sale Report</p>
               </a>
             </li>
             <li class="nav-item">
