@@ -54,5 +54,25 @@ app.get('/list', async (req, res, next) => {
   }
 });
 
+app.get('/billInfo/:billSaleId', async (req, res, next) => {
+  try {
+    const result = await prisma.billSaleDetail.findMany({
+      where: {
+        billSaleId: parseInt(req.params.billSaleId)
+      },
+      orderBy: {
+        id: 'desc'
+      },
+      include: {
+        Product: true
+      }
+    });
+
+    res.send({ result: result });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
 
 module.exports = app
