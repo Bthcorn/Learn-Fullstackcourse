@@ -46,7 +46,10 @@ app.get('/list', async (req, res, next) => {
     const result = await prisma.billSale.findMany({
       orderBy: {
         id: 'desc'
-      }
+      },
+      // where: {
+      //   status: 'wait'
+      // }
     });
     res.send({ result: result });
   } catch (error) {
@@ -74,5 +77,52 @@ app.get('/billInfo/:billSaleId', async (req, res, next) => {
   }
 });
 
+app.get('/updateStatustoPaid/:billSaleId', async (req, res, next) => {
+  try {
+    await prisma.billSale.update({
+      where: {
+        id: parseInt(req.params.billSaleId)
+      },
+      data: {
+        status: 'paid'
+      }
+    });
+    res.send({ message: 'success' });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
+app.get('/updateStatustoSent/:billSaleId', async (req, res, next) => {
+  try {
+    await prisma.billSale.update({
+      where: {
+        id: parseInt(req.params.billSaleId)
+      },
+      data: {
+        status: 'sent'
+      }
+    });
+    res.send({ message: 'success' });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
+
+app.get('/updateStatustoCanceled/:billSaleId', async (req, res, next) => {
+  try {
+    await prisma.billSale.update({
+      where: {
+        id: parseInt(req.params.billSaleId)
+      },
+      data: {
+        status: 'canceled'
+      }
+    });
+    res.send({ message: 'success' });
+  } catch (error) {
+    res.status(500).send({ message: error.message });
+  }
+});
 
 module.exports = app

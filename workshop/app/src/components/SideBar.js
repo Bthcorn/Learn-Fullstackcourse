@@ -66,7 +66,7 @@ export default function SideBar() {
           class="brand-image img-circle elevation-3"
           style={{ opacity: ".8" }}
         />
-        <span class="brand-text font-weight-light">AdminLTE 3</span>
+        <span class="brand-text font-weight-light">BackOffice</span>
       </a>
 
       {/* <!-- Sidebar --> */}
@@ -113,6 +113,12 @@ export default function SideBar() {
             {/* <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library --> */}
             <li className="nav-header">MENU</li>
+            <li class="nav-item">
+              <Link to="/dashboard" class="nav-link">
+                <i class="nav-icon fas fa-columns"></i>
+                <p>DashBoard</p>
+              </Link>
+            </li>
             <li className="nav-item">
               <Link to="/product" className="nav-link">
                 <i className="nav-icon fa fa-box"></i>
@@ -126,12 +132,6 @@ export default function SideBar() {
               <a href="/billsale" class="nav-link">
                 <i class="nav-icon fa fa-dollar-sign"></i>
                 <p>Sale Report</p>
-              </a>
-            </li>
-            <li class="nav-item">
-              <a href="pages/kanban.html" class="nav-link">
-                <i class="nav-icon fas fa-columns"></i>
-                <p>Kanban Board</p>
               </a>
             </li>
           </ul>

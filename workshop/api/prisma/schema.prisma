@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id     Int    @id @default(autoincrement())
-  name   String 
+  name   String
   user   String @unique()
   pass   String
   status String @default("use")
@@ -32,14 +32,14 @@ model Product {
 }
 
 model BillSale {
-  id              Int              @id @default(autoincrement())
-  customerName    String
-  customerPhone   String
-  customerAddress String
-  payDate         DateTime
-  payTime         String
-  status          String           @default("wait")
-  BillSaleDetail  BillSaleDetail[]
+  id               Int              @id @default(autoincrement())
+  customerName     String
+  customerPhone    String
+  customerAddress  String
+  payDate          DateTime
+  payTime          String
+  status           String           @default("wait")
+  BillSaleDetail   BillSaleDetail[]
 }
 
 model BillSaleDetail {
