@@ -1,5 +1,5 @@
 const config = {
-  apiPath: "http://localhost:3001",
+  apiPath: "http://139.180.128.145:3001",
 };
 
 export default config;

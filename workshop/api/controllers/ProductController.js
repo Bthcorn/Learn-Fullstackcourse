@@ -11,7 +11,9 @@ dotenv.config();
 app.use(fileUpload());
 // const userController = require("./UserController");
 
-app.post("/create", async (req, res, next) => {
+const checkSignIn = require("../middleware/auth");
+
+app.post("/create", checkSignIn , async (req, res, next) => {
   try {
     const result = await prisma.product.create({
       data: req.body,
@@ -23,7 +25,7 @@ app.post("/create", async (req, res, next) => {
   }
 });
 
-app.get("/list", async (req, res, next) => {
+app.get("/list", checkSignIn, async (req, res, next) => {
   try {
     const result = await prisma.product.findMany({
       orderBy: {
@@ -85,7 +87,7 @@ app.put("/update/:id", async (req, res, next) => {
 
 app.post("/upload", async (req, res, next) => {
   try {
-    if (req.files !== undefined && req.files.img !== undefined) {
+    if (req.files.img !== undefined) {
       const img = req.files.img;
       const fs = require("fs");
       const myDate = new Date();
